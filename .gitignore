@@ -27,3 +27,6 @@ build/
 .DS_Store
 .db
 *.db
+
+history_content.json
+package-lock.json
