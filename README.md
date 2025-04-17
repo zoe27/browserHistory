@@ -7,3 +7,9 @@ nvm use 18
 
 # npm 加日志可观察
 npm install -verbose
+
+# 编译文件
+npx tsc
+
+# 执行文件
+node dist/xx.js
