@@ -30,7 +30,7 @@ const stmt = db.prepare(`
   SELECT url, title, last_visit_time 
   FROM urls 
   ORDER BY last_visit_time DESC 
-  LIMIT 10
+  LIMIT 100
 `);
 
 // 定义历史记录的类型
@@ -40,8 +40,7 @@ interface HistoryRow {
   last_visit_time: number;
 }
 
-const rows: HistoryRow[] = stmt.all();
-
+const rows: HistoryRow[] = stmt.all() as HistoryRow[];
 // 定义结果类型
 interface Result {
   url: string;
