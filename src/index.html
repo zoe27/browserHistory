@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Browser History Query</title>
+</head>
+<body>
+  <h1>Query Browser History</h1>
+  <form id="queryForm">
+    <label for="query">Enter your query:</label>
+    <input type="text" id="query" name="query" required>
+    <button type="submit">Search</button>
+  </form>
+  <div id="result"></div>
+
+  <script>
+    document.getElementById('queryForm').addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const query = document.getElementById('query').value;
+
+      try {
+        const response = await fetch('http://localhost:3000/query', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ query }),
+        });
+
+        const data = await response.json();
+        document.getElementById('result').innerText = JSON.stringify(data, null, 2);
+      } catch (error) {
+        document.getElementById('result').innerText = 'Error: ' + error.message;
+      }
+    });
+  </script>
+</body>
+</html>

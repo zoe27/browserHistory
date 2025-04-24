@@ -30,3 +30,7 @@ build/
 
 history_content.json
 package-lock.json
+
+
+model/
+*.gguf

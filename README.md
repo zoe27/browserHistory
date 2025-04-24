@@ -13,3 +13,9 @@ npx tsc
 
 # 执行文件
 node dist/xx.js
+
+# 执行后端服务
+node server.js
+
+# 打开前端页面
+直接打开 index.html 文件
