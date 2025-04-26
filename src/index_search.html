@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>History Search</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+        header {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+        }
+        .container {
+            display: flex;
+            flex: 1;
+            gap: 20px;
+            padding: 20px;
+        }
+        .search-panel {
+            flex: 1;
+            padding: 20px;
+            border-right: 1px solid #ccc;
+        }
+        .results-panel {
+            flex: 2;
+            padding: 20px;
+            overflow-y: auto;
+            position: relative;
+        }
+        .search-box {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+        .search-button {
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        .result-item {
+            margin-bottom: 20px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .distance {
+            color: #666;
+            font-size: 0.9em;
+        }
+        .loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 1.2em;
+            color: #007bff;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>History Search</h1>
+    </header>
+    <div class="container">
+        <div class="search-panel">
+            <textarea id="searchInput" class="search-box" rows="4" placeholder="Enter search query..."></textarea>
+            <button onclick="search()" class="search-button">Search</button>
+        </div>
+        <div class="results-panel" id="results-panel">
+            <div id="loading" class="loading">Loading...</div>
+            <div id="results"></div>
+
+            <!-- Results will be displayed here -->
+        </div>
+    </div>
+    </div>
+
+    <script>
+        async function search() {
+            const query = document.getElementById('searchInput').value; // 映射到 textarea
+            const resultsDiv = document.getElementById('results'); // 映射到 results-panel
+            const loadingDiv = document.getElementById('loading'); // 映射到 loading
+
+            // 显示加载动画
+            loadingDiv.style.display = 'block';
+            resultsDiv.innerHTML = ''; // 清空之前的结果
+
+            try {
+                const response = await fetch('http://localhost:3000/query', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ query: query })
+                });
+
+                const data = await response.json();
+                console.log('Response:', data);
+
+                // 隐藏加载动画
+                loadingDiv.style.display = 'none';
+
+                const data_result = JSON.parse(data.result);
+                if (response.ok && Array.isArray(data_result)) {
+                    // 显示搜索结果
+                    resultsDiv.innerHTML = data_result.map(result => `
+                        <div class="result-item">
+                            <h3>${result.title || 'No Title'}</h3>
+                            <a href="${result.url || '#'}" target="_blank">${result.url || 'No URL'}</a>
+                        </div>
+                    `).join('');
+                } else {
+                    resultsDiv.innerHTML = `<p>Error: ${data.error || 'Invalid response format'}</p>`;
+                }
+            } catch (error) {
+                // 隐藏加载动画
+                loadingDiv.style.display = 'none';
+                resultsDiv.innerHTML = '<p>Search failed</p>';
+                console.error('Search error:', error);
+            }
+        }
+
+        // Enable search on Enter key
+        document.getElementById('searchInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                search();
+            }
+        });
+    </script>
+</body>
+</html>

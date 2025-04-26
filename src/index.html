@@ -4,22 +4,40 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Browser History Query</title>
+  <style>
+    #loading {
+      display: none;
+      text-align: center;
+      margin-top: 10px;
+    }
+  </style>
 </head>
 <body>
   <h1>Query Browser History</h1>
   <form id="queryForm">
     <label for="query">Enter your query:</label>
-    <input type="text" id="query" name="query" required>
+    <textarea id="query" name="query" rows="4" cols="50" required></textarea>
     <button type="submit">Search</button>
   </form>
+  <div id="loading">
+    <img src="loading.gif" alt="Loading..." width="50" height="50">
+    <p>Loading...</p>
+  </div>
+  </div>
   <div id="result"></div>
 
   <script>
-    document.getElementById('queryForm').addEventListener('submit', async (event) => {
+    const queryForm = document.getElementById('queryForm');
+    const loading = document.getElementById('loading');
+    const result = document.getElementById('result');
+
+    queryForm.addEventListener('submit', async (event) => {
       event.preventDefault();
       const query = document.getElementById('query').value;
 
       try {
+        loading.style.display = 'block'; // Show loading indicator
+
         const response = await fetch('http://localhost:3000/query', {
           method: 'POST',
           headers: {
@@ -29,9 +47,11 @@
         });
 
         const data = await response.json();
-        document.getElementById('result').innerText = JSON.stringify(data, null, 2);
+        result.innerText = JSON.stringify(data, null, 2);
       } catch (error) {
-        document.getElementById('result').innerText = 'Error: ' + error.message;
+        result.innerText = 'Error: ' + error.message;
+      } finally {
+        loading.style.display = 'none'; // Hide loading indicator
       }
     });
   </script>
